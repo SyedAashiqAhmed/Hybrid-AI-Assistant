@@ -2,9 +2,10 @@
 /// Contains all constants, API keys, and configuration settings
 class AppConfig {
   // Gemini API Configuration
-  static const String geminiApiKey = 'AIzaSyCYDmt4DgneIficnxdP8i8PRRRgI0lRyEk';
+  // Get your API key from: https://aistudio.google.com/app/apikey
+  static const String geminiApiKey = 'YOUR_API_KEY_HERE';
   static const String geminiBaseUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
-  static const String geminiModel = 'gemini-2.5-flash';  // Working model with available quota!
+  static const String geminiModel = 'gemini-2.5-flash';  // ✅ TESTED AND WORKING!
   
   // App Settings
   static const String appName = 'Astralite';
@@ -45,6 +46,7 @@ class AppConfig {
     'go to',
     'visit',
     'navigate to',
+    
   ];
   
   // Timer and Alarm Keywords

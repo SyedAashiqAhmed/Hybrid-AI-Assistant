@@ -6,7 +6,7 @@ import 'dart:io';
 void main() async {
   print('🧪 Testing Gemini API Connection...\n');
 
-  const apiKey = 'AIzaSyBRNFZ8jXFRoZSo8D1mnX0V--ZLmd93tiY';
+  const apiKey = 'YOUR_API_KEY_HERE';
   const model = 'gemini-2.0-flash-lite';  // Updated to available model
   
   // Using v1 API endpoint

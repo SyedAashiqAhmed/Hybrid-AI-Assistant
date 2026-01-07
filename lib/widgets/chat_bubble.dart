@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dart:ui';
 import 'package:intl/intl.dart';
 import '../models/message.dart';
 
-/// Premium Chat Bubble Widget with Glassmorphism
-/// Beautiful message display with smooth animations
+/// Professional Chat Bubble Widget
 class ChatBubble extends StatelessWidget {
   final Message message;
 
@@ -20,182 +18,120 @@ class ChatBubble extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         mainAxisAlignment:
             isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (!isUser) _buildPremiumAvatar(false, theme, isDark),
-          if (!isUser) const SizedBox(width: 12),
+          if (!isUser) _buildAvatar(false, theme, isDark),
+          if (!isUser) const SizedBox(width: 8),
           Flexible(
             child: Column(
               crossAxisAlignment:
                   isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: [
-                _buildGlassBubble(theme, isDark),
-                const SizedBox(height: 6),
+                _buildBubble(theme, isDark),
+                const SizedBox(height: 4),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: Text(
                     _formatTime(message.timestamp),
                     style: TextStyle(
                       fontSize: 11,
-                      color: theme.textTheme.bodySmall?.color?.withOpacity(0.5),
-                      fontWeight: FontWeight.w500,
+                      color: isDark ? Colors.grey[600] : Colors.grey[500],
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          if (isUser) const SizedBox(width: 12),
-          if (isUser) _buildPremiumAvatar(true, theme, isDark),
+          if (isUser) const SizedBox(width: 8),
+          if (isUser) _buildAvatar(true, theme, isDark),
         ],
       ),
     );
   }
 
-  /// Premium avatar with gradient and glow
-  Widget _buildPremiumAvatar(bool isUser, ThemeData theme, bool isDark) {
-    return Container(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isUser
-              ? [
-                  theme.colorScheme.primary,
-                  theme.colorScheme.secondary,
-                ]
-              : [
-                  theme.colorScheme.secondary,
-                  theme.colorScheme.tertiary,
-                ],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: (isUser
-                    ? theme.colorScheme.primary
-                    : theme.colorScheme.secondary)
-                .withOpacity(0.4),
-            blurRadius: 12,
-            spreadRadius: 2,
-          ),
-        ],
-      ),
-      child: CircleAvatar(
-        radius: 20,
-        backgroundColor: Colors.transparent,
-        child: Icon(
-          isUser ? Icons.person_rounded : Icons.auto_awesome_rounded,
-          size: 22,
-          color: Colors.white,
-        ),
+  /// Simple avatar
+  Widget _buildAvatar(bool isUser, ThemeData theme, bool isDark) {
+    return CircleAvatar(
+      radius: 16,
+      backgroundColor: isUser
+          ? theme.colorScheme.primary
+          : (isDark ? Colors.grey[700] : Colors.grey[300]),
+      child: Icon(
+        isUser ? Icons.person : Icons.smart_toy,
+        size: 18,
+        color: Colors.white,
       ),
     );
   }
 
-  /// Glass morphic bubble
-  Widget _buildGlassBubble(ThemeData theme, bool isDark) {
+  /// Simple bubble
+  Widget _buildBubble(ThemeData theme, bool isDark) {
     final isUser = message.isUser;
     
     return Container(
       constraints: const BoxConstraints(maxWidth: 280),
       decoration: BoxDecoration(
-        gradient: _getBubbleGradient(theme, isDark),
+        color: _getBubbleColor(theme, isDark),
         borderRadius: BorderRadius.only(
-          topLeft: const Radius.circular(20),
-          topRight: const Radius.circular(20),
-          bottomLeft: Radius.circular(isUser ? 20 : 4),
-          bottomRight: Radius.circular(isUser ? 4 : 20),
+          topLeft: const Radius.circular(16),
+          topRight: const Radius.circular(16),
+          bottomLeft: Radius.circular(isUser ? 16 : 4),
+          bottomRight: Radius.circular(isUser ? 4 : 16),
         ),
-        border: Border.all(
-          color: isDark
-              ? Colors.white.withOpacity(0.1)
-              : Colors.black.withOpacity(0.05),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: _getShadowColor(theme).withOpacity(0.2),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
+      ),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 14,
+        vertical: 10,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (!isUser && message.type == MessageType.systemAction)
+            _buildSystemBadge(theme, isDark),
+          if (!isUser && message.type == MessageType.systemAction)
+            const SizedBox(height: 6),
+          Text(
+            message.text,
+            style: TextStyle(
+              color: _getTextColor(theme, isDark),
+              fontSize: 14,
+              height: 1.4,
+            ),
           ),
         ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.only(
-          topLeft: const Radius.circular(20),
-          topRight: const Radius.circular(20),
-          bottomLeft: Radius.circular(isUser ? 20 : 4),
-          bottomRight: Radius.circular(isUser ? 4 : 20),
-        ),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 14,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (!isUser && message.type == MessageType.systemAction)
-                  _buildSystemBadge(theme),
-                if (!isUser && message.type == MessageType.systemAction)
-                  const SizedBox(height: 8),
-                Text(
-                  message.text,
-                  style: TextStyle(
-                    color: _getTextColor(theme),
-                    fontSize: 15,
-                    height: 1.4,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }
 
   /// System action badge
-  Widget _buildSystemBadge(ThemeData theme) {
+  Widget _buildSystemBadge(ThemeData theme, bool isDark) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            theme.colorScheme.primary.withOpacity(0.2),
-            theme.colorScheme.secondary.withOpacity(0.2),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: theme.colorScheme.primary.withOpacity(0.3),
-          width: 1,
-        ),
+        color: isDark
+            ? Colors.blue[900]?.withOpacity(0.3)
+            : Colors.blue[100],
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            Icons.settings_suggest_rounded,
-            size: 14,
-            color: theme.colorScheme.primary,
+            Icons.settings,
+            size: 12,
+            color: isDark ? Colors.blue[300] : Colors.blue[700],
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: 4),
           Text(
             'System Action',
             style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-              color: theme.colorScheme.primary,
-              letterSpacing: 0.5,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: isDark ? Colors.blue[300] : Colors.blue[700],
             ),
           ),
         ],
@@ -203,65 +139,35 @@ class ChatBubble extends StatelessWidget {
     );
   }
 
-  /// Get bubble gradient
-  Gradient _getBubbleGradient(ThemeData theme, bool isDark) {
+  /// Get bubble color
+  Color _getBubbleColor(ThemeData theme, bool isDark) {
     if (message.isError) {
-      return LinearGradient(
-        colors: [
-          theme.colorScheme.errorContainer.withOpacity(isDark ? 0.3 : 0.8),
-          theme.colorScheme.errorContainer.withOpacity(isDark ? 0.2 : 0.6),
-        ],
-      );
+      return isDark ? Colors.red[900]! : Colors.red[100]!;
     }
     
     if (message.isUser) {
-      return LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          theme.colorScheme.primary.withOpacity(isDark ? 0.4 : 1.0),
-          theme.colorScheme.secondary.withOpacity(isDark ? 0.3 : 0.9),
-        ],
-      );
+      return theme.colorScheme.primary;
     }
     
     if (message.type == MessageType.systemAction) {
-      return LinearGradient(
-        colors: [
-          theme.colorScheme.secondaryContainer.withOpacity(isDark ? 0.3 : 0.8),
-          theme.colorScheme.tertiaryContainer.withOpacity(isDark ? 0.2 : 0.6),
-        ],
-      );
+      return isDark ? Colors.blue[900]! : Colors.blue[50]!;
     }
     
-    return LinearGradient(
-      colors: [
-        (isDark ? Colors.white : theme.colorScheme.surface).withOpacity(isDark ? 0.1 : 0.9),
-        (isDark ? Colors.white : theme.colorScheme.surface).withOpacity(isDark ? 0.05 : 0.8),
-      ],
-    );
-  }
-
-  /// Get shadow color
-  Color _getShadowColor(ThemeData theme) {
-    if (message.isError) return theme.colorScheme.error;
-    if (message.isUser) return theme.colorScheme.primary;
-    if (message.type == MessageType.systemAction) return theme.colorScheme.secondary;
-    return theme.colorScheme.primary;
+    return isDark ? const Color(0xFF2C2C2C) : Colors.white;
   }
 
   /// Get text color
-  Color _getTextColor(ThemeData theme) {
+  Color _getTextColor(ThemeData theme, bool isDark) {
     if (message.isError) {
-      return theme.colorScheme.onErrorContainer;
+      return isDark ? Colors.red[200]! : Colors.red[900]!;
     }
     if (message.isUser) {
       return Colors.white;
     }
     if (message.type == MessageType.systemAction) {
-      return theme.colorScheme.onSecondaryContainer;
+      return isDark ? Colors.blue[100]! : Colors.blue[900]!;
     }
-    return theme.colorScheme.onSurface;
+    return isDark ? Colors.grey[200]! : Colors.black87;
   }
 
   String _formatTime(DateTime time) {
@@ -269,7 +175,7 @@ class ChatBubble extends StatelessWidget {
   }
 }
 
-/// Premium Typing Indicator with Pulse Animation
+/// Simple Typing Indicator
 class TypingIndicator extends StatefulWidget {
   const TypingIndicator({Key? key}) : super(key: key);
 
@@ -286,7 +192,7 @@ class _TypingIndicatorState extends State<TypingIndicator>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1400),
+      duration: const Duration(milliseconds: 1200),
     )..repeat();
   }
 
@@ -302,88 +208,34 @@ class _TypingIndicatorState extends State<TypingIndicator>
     final isDark = theme.brightness == Brightness.dark;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
-          // Avatar with pulse animation
-          AnimatedBuilder(
-            animation: _controller,
-            builder: (context, child) {
-              return Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: theme.colorScheme.secondary.withOpacity(0.3 + (_controller.value * 0.3)),
-                      blurRadius: 12 + (_controller.value * 8),
-                      spreadRadius: 2 + (_controller.value * 2),
-                    ),
-                  ],
-                ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [
-                        theme.colorScheme.secondary,
-                        theme.colorScheme.tertiary,
-                      ],
-                    ),
-                  ),
-                  child: const CircleAvatar(
-                    radius: 20,
-                    backgroundColor: Colors.transparent,
-                    child: Icon(
-                      Icons.auto_awesome_rounded,
-                      size: 22,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-          const SizedBox(width: 12),
-          // Glass bubble with animated dots
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  (isDark ? Colors.white : theme.colorScheme.surface).withOpacity(isDark ? 0.1 : 0.9),
-                  (isDark ? Colors.white : theme.colorScheme.surface).withOpacity(isDark ? 0.05 : 0.8),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: isDark
-                    ? Colors.white.withOpacity(0.1)
-                    : Colors.black.withOpacity(0.05),
-                width: 1,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: theme.colorScheme.primary.withOpacity(0.15),
-                  blurRadius: 16,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+          CircleAvatar(
+            radius: 16,
+            backgroundColor: isDark ? Colors.grey[700] : Colors.grey[300],
+            child: const Icon(
+              Icons.smart_toy,
+              size: 18,
+              color: Colors.white,
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildAnimatedDot(0, theme),
-                    const SizedBox(width: 6),
-                    _buildAnimatedDot(1, theme),
-                    const SizedBox(width: 6),
-                    _buildAnimatedDot(2, theme),
-                  ],
-                ),
-              ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF2C2C2C) : Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildDot(0, isDark),
+                const SizedBox(width: 4),
+                _buildDot(1, isDark),
+                const SizedBox(width: 4),
+                _buildDot(2, isDark),
+              ],
             ),
           ),
         ],
@@ -391,34 +243,21 @@ class _TypingIndicatorState extends State<TypingIndicator>
     );
   }
 
-  Widget _buildAnimatedDot(int index, ThemeData theme) {
+  Widget _buildDot(int index, bool isDark) {
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
-        final value = (_controller.value - (index * 0.25)) % 1.0;
-        final scale = 0.6 + (value < 0.5 ? value : 1 - value) * 0.8;
-        final opacity = 0.3 + (value < 0.5 ? value : 1 - value) * 0.7;
+        final value = (_controller.value - (index * 0.2)) % 1.0;
+        final opacity = value < 0.5 ? value * 2 : (1 - value) * 2;
 
-        return Transform.scale(
-          scale: scale,
+        return Opacity(
+          opacity: 0.3 + (opacity * 0.7),
           child: Container(
-            width: 10,
-            height: 10,
+            width: 8,
+            height: 8,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  theme.colorScheme.primary.withOpacity(opacity),
-                  theme.colorScheme.secondary.withOpacity(opacity),
-                ],
-              ),
+              color: isDark ? Colors.grey[400] : Colors.grey[600],
               shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: theme.colorScheme.primary.withOpacity(opacity * 0.5),
-                  blurRadius: 4,
-                  spreadRadius: 1,
-                ),
-              ],
             ),
           ),
         );

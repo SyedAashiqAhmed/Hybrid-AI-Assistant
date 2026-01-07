@@ -5,7 +5,7 @@ import 'dart:io';
 void main() async {
   print('🔍 Checking available Gemini models...\n');
 
-  const apiKey = 'AIzaSyBRNFZ8jXFRoZSo8D1mnX0V--ZLmd93tiY';
+  const apiKey = 'YOUR_API_KEY_HERE';
   
   final url = Uri.parse(
     'https://generativelanguage.googleapis.com/v1/models?key=$apiKey'

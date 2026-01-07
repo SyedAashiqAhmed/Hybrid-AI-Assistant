@@ -24,9 +24,9 @@ class GeminiService {
         'parts': [{'text': userQuery}],
       });
 
-      // Prepare request - Using v1 API endpoint
+      // Prepare request - Using v1beta API endpoint with query parameter auth
       final url = Uri.parse(
-        'https://generativelanguage.googleapis.com/v1/models/$_model:generateContent?key=$_apiKey'
+        'https://generativelanguage.googleapis.com/v1beta/models/$_model:generateContent?key=$_apiKey'
       );
       
       final requestBody = {
@@ -141,12 +141,14 @@ class GeminiService {
   Future<bool> testConnection() async {
     try {
       final url = Uri.parse(
-        'https://generativelanguage.googleapis.com/v1/models/$_model:generateContent?key=$_apiKey'
+        'https://generativelanguage.googleapis.com/v1beta/models/$_model:generateContent?key=$_apiKey'
       );
       
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: jsonEncode({
           'contents': [
             {

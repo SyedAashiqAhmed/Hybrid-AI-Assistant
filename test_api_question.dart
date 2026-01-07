@@ -5,7 +5,7 @@ import 'dart:io';
 void main() async {
   print('🧪 Testing Gemini API with a real question...\n');
 
-  const apiKey = 'AIzaSyCYDmt4DgneIficnxdP8i8PRRRgI0lRyEk';  // LATEST API KEY
+  const apiKey = 'YOUR_API_KEY_HERE';  // LATEST API KEY
   const model = 'gemini-2.0-flash-lite';
   
   final url = Uri.parse(
